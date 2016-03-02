@@ -19,6 +19,10 @@ install_requires = [
     'Lasagne',
     ]
 
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    install_requires = []
+
 tests_require = [
     'mock',
     'pytest',

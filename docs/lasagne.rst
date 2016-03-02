@@ -54,8 +54,11 @@ API
 
 .. automodule:: nolearn.lasagne
 
-  .. autoclass:: NeuralNet
+  .. autoclass:: NeuralNet(self,layers,**kwargs)
      :members:
+
+     .. automethod:: __init__(self,layers,**kwargs)
+
 
   .. autoclass:: BatchIterator
      :members:
