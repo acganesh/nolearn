@@ -40,6 +40,7 @@ Modules
 .. toctree::
    :maxdepth: 2
 
+   LayerDef
    cache
    decaf
    inischema
