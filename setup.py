@@ -65,3 +65,4 @@ setup(name='nolearn',
           'all': all_require,
           },
       )
+
