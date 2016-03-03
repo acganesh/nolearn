@@ -158,6 +158,19 @@ def objective(layers,
               l1=0,
               l2=0,
               get_output_kw=None):
+    """
+    Default implementation of the NeuralNet Objective.
+    :param layers: The underlying layers of the NeuralNetwork
+    :param loss_function: The callable loss function to use
+    :param target: the expected output
+
+    :param aggregate: the aggregation function to use
+    :param deterministic: Whether or not to get a deterministic output
+    :param l1: Optional l1 regularization parameter
+    :param l2: Optional l2 regularization parameter
+    :param get_output_kw: optional kwargs to pass to :meth:`NeuralNetwork.get_output`
+    :return: The total calculated loss
+    """
     if get_output_kw is None:
         get_output_kw = {}
     output_layer = layers[-1]
@@ -175,7 +188,7 @@ def objective(layers,
 
 
 class NeuralNet(BaseEstimator):
-    """A scikit-learn estimator based on Lasagne.
+    """A Configurable Neural Network Estimator based on Lasagne.  Compatible with The Scikit-learn esitmator
 
     Attributes
     ----------
@@ -190,35 +203,35 @@ class NeuralNet(BaseEstimator):
         * valid_loss - The validation loss for this epoch
         * valid_accuracy - The validation accuracy for this epoch
 
-    layers_: A dictionary of lasagne layers keyed by the layer's name.
+    layers_: A dictionary of lasagne layers keyed by the layer's name, or the layer's index
 
-    max_epochs: The default number of epochs to train for as passed to the constructor
+    max_epochs: The default number of epochs to train for, as passed to the constructor
 
     """
     def __init__(
-            self,
-            layers,
-            update=nesterov_momentum,
-            loss=None,  # BBB
-            objective=objective,
-            objective_loss_function=None,
-            batch_iterator_train=BatchIterator(batch_size=128),
-            batch_iterator_test=BatchIterator(batch_size=128),
-            regression=False,
-            max_epochs=100,
-            train_split=TrainSplit(eval_size=0.2),
-            custom_scores=None,
-            X_tensor_type=None,  # BBB
-            y_tensor_type=None,
-            use_label_encoder=False,
-            on_batch_finished=None,
-            on_epoch_finished=None,
-            on_training_started=None,
-            on_training_finished=None,
-            more_params=None,
-            verbose=0,
-            **kwargs
-    ):
+        self,
+        layers,
+        update=nesterov_momentum,
+        loss=None,  # BBB
+        objective=objective,
+        objective_loss_function=None,
+        batch_iterator_train=BatchIterator(batch_size=128),
+        batch_iterator_test=BatchIterator(batch_size=128),
+        regression=False,
+        max_epochs=100,
+        train_split=TrainSplit(eval_size=0.2),
+        custom_scores=None,
+        X_tensor_type=None,
+        y_tensor_type=None,
+        use_label_encoder=False,
+        on_batch_finished=None,
+        on_epoch_finished=None,
+        on_training_started=None,
+        on_training_finished=None,
+        more_params=None,
+        verbose=0,
+        **kwargs
+        ):
         """
         Constructor For the Neural Network.
 
@@ -226,6 +239,7 @@ class NeuralNet(BaseEstimator):
         ----------
         layers:
             A list of lasagne layers to compose into the final neural net.
+            See :ref:`layer-def`
 
         update:
             The update function to use when training.
@@ -294,8 +308,8 @@ class NeuralNet(BaseEstimator):
         --------
 
         * The objective parameter has changed since previous versions. The objective previously provided class is no
-          longer supported.
-        * The loss parameter is now deprecated
+          longer supported.  Instead use :func:`nolearn.lasagne.objective` or similar
+        * The loss parameter is now deprecated use `objective_loss_function` in conjunction with suitable `objective`
         """
         if loss is not None:
             raise ValueError(
@@ -347,7 +361,7 @@ class NeuralNet(BaseEstimator):
 
         if isinstance(layers, Layer):
             layers = _list([layers])
-            
+
         self.layers = layers
         self.update = update
         self.objective = objective
@@ -415,6 +429,12 @@ class NeuralNet(BaseEstimator):
         return X, y
 
     def initialize(self):
+        """
+        Initializes the network.  Checks that no extra kwargs were passed to the constructor,
+        and compiles the train,predict, and evaluation functions
+
+        Subsequent calls to this function will return without any action
+        """
         if getattr(self, '_initialized', False):
             return
 
@@ -448,6 +468,14 @@ class NeuralNet(BaseEstimator):
             layer_class.__name__.lower().replace("layer", ""), index)
 
     def initialize_layers(self, layers=None):
+        """
+        Builds the underlying Lasagne network
+
+        :param layers:  The dictionary of layers, or a :class:`lasagne.Layers` instance, describing the underlying network
+        :return: the output layer of the underlying lasagne network.
+
+        :seealso: :ref:`layer-def`
+        """
         if layers is not None:
             self.layers = layers
         self.layers_ = Layers()
