@@ -117,10 +117,10 @@ API
 
 .. automodule:: nolearn.lasagne
 
-  .. autoclass:: NeuralNet(self,layers,**kwargs)
+  .. autoclass:: NeuralNet(self, layers, **kwargs)
      :members:
 
-     .. automethod:: __init__(self,layers,**kwargs)
+     .. automethod:: __init__(self, layers, **kwargs)
 
 
   .. autoclass:: BatchIterator
