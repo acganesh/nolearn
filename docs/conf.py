@@ -12,7 +12,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project   = u'nolearn'
+project = u'nolearn'
 copyright = u'2012-2014, Daniel Nouri'
 
 version = '0.6'  # The short X.Y version.
