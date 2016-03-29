@@ -239,8 +239,8 @@ class NeuralNet(BaseEstimator):
         verbose=0,
         **kwargs
         ):
-        """:param layers: A list of lasagne layers to compose into the final
-                          neural net
+        """
+        Constructor For the Neural Network.
 
         Parameters
         ----------
